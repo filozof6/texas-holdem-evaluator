@@ -61,6 +61,7 @@ class Round
                     $bSubValue = $b->getHandResult()->getSubValue();
 
                     if ($aSubValue === $bSubValue) {
+                        $i = 1;
                         return 0;
                     }
 

@@ -42,9 +42,8 @@ class HandEvaluator
             foreach ($sortedHand as $card) {
                 $previousCardRank = Cards::getRankValue($previousCard[0], $aceIsHighest);
                 $currentCardRank = Cards::getRankValue($card[0], $aceIsHighest);
-                $diff = $currentCardRank - $previousCardRank;
 
-                if ($diff !== 1) {
+                if ($currentCardRank !== $previousCardRank * 2) {
                     $toReturn = false;
                     break;
                 }
@@ -120,25 +119,27 @@ class HandEvaluator
 
     /**
      * @param array $hand
+     * @param bool $aceIsHighest
      * @return string
      */
-    public static function getHighCardRank(array $hand): string
+    public static function getHighCardRank(array $hand, bool $aceIsHighest = true): string
     {
-        $sortedHand = self::sortHand($hand);
+        $sortedHand = self::sortHand($hand, $aceIsHighest);
 
         return array_pop($sortedHand)[0];
     }
 
     /**
      * @param array $hand
+     * @param bool $aceIsHighest
      * @return int
      */
-    public static function getHighCardRankValue(array $hand): int
+    public static function getHighCardRankValue(array $hand, bool $aceIsHighest = true): int
     {
-        $sortedHand = self::sortHand($hand);
+        $sortedHand = self::sortHand($hand, $aceIsHighest);
         $highestRank = array_pop($sortedHand);
 
-        return Cards::getRankValue($highestRank);
+        return Cards::getRankValue($highestRank, $aceIsHighest);
     }
 
     /**
@@ -174,5 +175,24 @@ class HandEvaluator
         return array_reduce($ranks, function (int $totalSum, string $rank) use ($aceIsHighest) {
             return $totalSum + Cards::getRankValue($rank, $aceIsHighest);
         }, 0);
+    }
+
+    /**
+     * @param string[] $hand
+     * @param bool $aceIsHighest
+     * @return int
+     */
+    public static function sumKickerValues(array $hand, bool $aceIsHighest = true): int
+    {
+        $toReturn = 0;
+        $sameOccurrences = self::sameOccurrences($hand);
+        $ranks = array_keys($sameOccurrences, 1);
+
+        foreach ($ranks as $rank) {
+            $rankValue = Cards::getRankValue($rank, $aceIsHighest);
+            $toReturn += $rankValue;
+        }
+
+        return $toReturn;
     }
 }

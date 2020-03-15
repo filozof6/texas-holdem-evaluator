@@ -1,6 +1,7 @@
 <?php
 namespace Tests\AppBundle\Service\Poker;
 
+use AppBundle\Constants\Cards;
 use AppBundle\Services\Poker\HandEvaluator;
 use PHPUnit\Framework\TestCase;
 
@@ -10,8 +11,8 @@ class HandEvaluatorTest extends TestCase
     public function highCardProvider()
     {
         return [
-            [['QC', 'KS', 'QH', '7S', 'AH'], 'A'],
-            [['KD', '9C', 'JH', '7H', 'KC'], 'K'],
+            [['QC', 'KS', 'QH', '7S', 'AH'], true, 'A'],
+            [['KD', '9C', 'JH', '7H', 'KC'], true, 'K'],
         ];
     }
 
@@ -19,11 +20,12 @@ class HandEvaluatorTest extends TestCase
     /**
      * @dataProvider highCardProvider
      * @param array $hand
+     * @param bool $aceIsHighest
      * @param string $expectedResult
      */
-    public function testGetHighCardRank(array $hand, string $expectedResult)
+    public function testGetHighCardRank(array $hand, bool $aceIsHighest, string $expectedResult)
     {
-        $realResult = HandEvaluator::getHighCardRank($hand);
+        $realResult = HandEvaluator::getHighCardRank($hand, $aceIsHighest);
         $this->assertSame($expectedResult, $realResult);
     }
 
@@ -112,32 +114,34 @@ class HandEvaluatorTest extends TestCase
     public function getHighCardRankValueProvider()
     {
         return [
-            [['TC', 'JD', 'QH', 'KS', 'AH'], 14],
-            [['2D', '3D', '4D', '7D', 'TD'], 10],
+            [['TC', 'JD', 'QH', 'KS', 'AH'], true, Cards::ACE_HIGH_VALUE],
+            [['2D', '3D', '4D', '7D', 'TD'], true, Cards::TEN_VALUE],
+            [['AD', '2D', '3D', '4S', '5D'], false, Cards::FIVE_VALUE],
         ];
     }
 
     /**
      * @dataProvider getHighCardRankValueProvider
      * @param array $hand
+     * @param bool $aceIsHighest
      * @param int $expectedResult
      */
-    public function testGetHighCardRankValue(array $hand, int $expectedResult)
+    public function testGetHighCardRankValue(array $hand, bool $aceIsHighest, int $expectedResult)
     {
-        $realResult = HandEvaluator::getHighCardRankValue($hand);
+        $realResult = HandEvaluator::getHighCardRankValue($hand, $aceIsHighest);
         $this->assertSame($expectedResult, $realResult);
     }
 
     public function sumValuesOfMagnitudeProvider()
     {
         return [
-            [['2C', '2D', 'QH', 'KS', 'AH'], 2, true, 2],
-            [['AD', 'AS', 'AH', '5D', '6D'], 3, true, 14],
-            [['AD', 'AD', '3S', '4S', '5S'], 2, true, 14],
-            [['TC', 'JD', 'QH', 'KS', 'AH'], 1, true, 60],
-            [['2S', '3D', '4D', '5D', '6D'], 1, true, 20],
-            [['AD', '2D', '3D', '4S', '5D'], 1, false, 15],
-            [['2D', '2H', '3D', '3D', '5D'], 2, true, 5],
+            [['2C', '2D', 'QH', 'KS', 'AH'], 2, true, Cards::TWO_VALUE],
+            [['AD', 'AS', 'AH', '5D', '6D'], 3, true, Cards::ACE_HIGH_VALUE],
+            [['AD', 'AD', '3S', '4S', '5S'], 2, true, Cards::ACE_HIGH_VALUE],
+            [['TC', 'JD', 'QH', 'KS', 'AH'], 1, true, Cards::TEN_VALUE + Cards::JACK_VALUE + Cards::QUEEN_VALUE + Cards::KING_VALUE + Cards::ACE_HIGH_VALUE],
+            [['2S', '3D', '4D', '5D', '6D'], 1, true, Cards::TWO_VALUE + Cards::THREE_VALUE + Cards::FOUR_VALUE + Cards::FIVE_VALUE + Cards::SIX_VALUE],
+            [['AD', '2D', '3D', '4S', '5D'], 1, false, Cards::ACE_LOW_VALUE + Cards::TWO_VALUE + Cards::THREE_VALUE + Cards::FOUR_VALUE + Cards::FIVE_VALUE],
+            [['2D', '2H', '3D', '3D', '5D'], 2, true, Cards::TWO_VALUE + Cards::THREE_VALUE],
         ];
     }
 
@@ -145,6 +149,7 @@ class HandEvaluatorTest extends TestCase
      * @dataProvider sumValuesOfMagnitudeProvider
      * @param array $hand
      * @param int $magnitude
+     * @param bool $aceIsHighest
      * @param int $expectedResult
      */
     public function testSumValuesOfMagnitude(array $hand, int $magnitude, bool $aceIsHighest, int $expectedResult)
@@ -170,6 +175,29 @@ class HandEvaluatorTest extends TestCase
     public function testSortHandProvider(array $hand, bool $aceIsHighest, array $expectedResult)
     {
         $realResult = HandEvaluator::sortHand($hand, $aceIsHighest);
+        $this->assertSame($expectedResult, $realResult);
+    }
+
+    public function getKickerValueProvider()
+    {
+        return [
+            [['2C', '2D', '5H', '4S', 'AH'], true, Cards::FIVE_VALUE + Cards::FOUR_VALUE + Cards::ACE_HIGH_VALUE],
+            [['3C', '3D', '5H', '5S', '4H'], true, Cards::FOUR_VALUE],
+            [['3C', '3D', '3H', '5S', '4H'], true, Cards::FIVE_VALUE + Cards::FOUR_VALUE],
+            [['5C', 'JC', '2H', '5S', '3D'], true, Cards::JACK_VALUE + Cards::TWO_VALUE + Cards::THREE_VALUE],
+            [['6D', '7C', '5D', '5H', '3S'], true, Cards::SIX_VALUE + Cards::SEVEN_VALUE + Cards::THREE_VALUE],
+        ];
+    }
+
+    /**
+     * @dataProvider getKickerValueProvider
+     * @param array $hand
+     * @param bool $aceIsHighest
+     * @param int $expectedResult
+     */
+    public function testGetKickerValue(array $hand, bool $aceIsHighest, int $expectedResult)
+    {
+        $realResult = HandEvaluator::sumKickerValues($hand, $aceIsHighest);
         $this->assertSame($expectedResult, $realResult);
     }
 }

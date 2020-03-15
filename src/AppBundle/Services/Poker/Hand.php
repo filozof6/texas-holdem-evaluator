@@ -74,13 +74,17 @@ class Hand
             case Rules::FLUSH_VALUE:
                 return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 1);
             case Rules::FOUR_OF_A_KIND_VALUE:
-                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 4);
+                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 4) +
+                    HandEvaluator::sumKickerValues($this->getCards());
             case Rules::FULL_HOUSE_VALUE:
-            case Rules::THREE_OF_A_KIND_VALUE:
                 return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 3);
+            case Rules::THREE_OF_A_KIND_VALUE:
+                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 3) +
+                    HandEvaluator::sumKickerValues($this->getCards());
             case Rules::TWO_PAIR_VALUE:
             case Rules::ONE_PAIR_VALUE:
-                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 2);
+                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 2) +
+                    HandEvaluator::sumKickerValues($this->getCards());
             case Rules::HIGH_CARD_VALUE:
                 return HandEvaluator::getHighCardRankValue($this->getCards());
             default:
