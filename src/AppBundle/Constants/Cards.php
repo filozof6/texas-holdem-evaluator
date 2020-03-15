@@ -20,9 +20,9 @@ final class Cards
     const QUEEN = 'Q';
     const KING = 'K';
 
-    const RANK_VALUE_MULTIPLIER = 3;
+    const RANK_VALUE_MULTIPLIER = 5;
 
-    const ACE_LOW_VALUE = 2;
+    const ACE_LOW_VALUE = self::RANK_VALUE_MULTIPLIER;
     const TWO_VALUE = self::ACE_LOW_VALUE * self::RANK_VALUE_MULTIPLIER;
     const THREE_VALUE = self::TWO_VALUE * self::RANK_VALUE_MULTIPLIER;
     const FOUR_VALUE = self::THREE_VALUE * self::RANK_VALUE_MULTIPLIER;
