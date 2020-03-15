@@ -4,9 +4,9 @@
 parameters:
     database_host: 127.0.0.1
     database_port: ~
-    database_name: pkr
-    database_user: phpmyadmin
-    database_password: 123456
+    database_name:
+    database_user:
+    database_password:
     # You should uncomment this if you want to use pdo_sqlite
     #database_path: '%kernel.project_dir%/var/data/data.sqlite'
 

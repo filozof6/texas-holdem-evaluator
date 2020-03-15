@@ -8,13 +8,10 @@ A Symfony project created on March 13, 2020, 5:13 pm.
 
 ```
 cd /path/to/project/root
-cp app/config/parameters.yml.dist app/config/parameters.yml
-nano app/config/parameters.yml
 
 composer install
 php bin/console doctrine:database:create
 php bin/console doctrine:database:import
-
 ```
 
 
