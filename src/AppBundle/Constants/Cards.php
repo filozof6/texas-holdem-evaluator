@@ -20,7 +20,7 @@ final class Cards
     const QUEEN = 'Q';
     const KING = 'K';
 
-    const RANK_VALUE_MULTIPLIER = 5;
+    const RANK_VALUE_MULTIPLIER = 2;
 
     const ACE_LOW_VALUE = self::RANK_VALUE_MULTIPLIER;
     const TWO_VALUE = self::ACE_LOW_VALUE * self::RANK_VALUE_MULTIPLIER;
