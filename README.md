@@ -11,7 +11,7 @@ cd /path/to/project/root
 
 composer install
 php bin/console doctrine:database:create
-php bin/console doctrine:database:import
+php bin/console doctrine:schema:create
 ```
 
 
