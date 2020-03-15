@@ -17,7 +17,12 @@ class HandResult
     /**
      * @var int
      */
-    private $subValue;
+    private $subValue = 0;
+
+    /**
+     * @var int
+     */
+    private $kickersValue = 0;
 
     /**
      * Hand constructor.
@@ -87,6 +92,25 @@ class HandResult
     public function setSubValue(int $subValue)
     {
         $this->subValue = $subValue;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getKickersValue(): int
+    {
+        return $this->kickersValue;
+    }
+
+    /**
+     * @param int $kickersValue
+     * @return HandResult
+     */
+    public function setKickersValue(int $kickersValue)
+    {
+        $this->kickersValue = $kickersValue;
 
         return $this;
     }

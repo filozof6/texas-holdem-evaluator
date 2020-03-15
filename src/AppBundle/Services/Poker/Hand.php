@@ -52,7 +52,7 @@ class Hand
         foreach (Rules::WINNING_HANDS as $type => $metadata) {
             $handResult->setType($type)->setValue($metadata['value']);
             if ($this->isComplyingToConditions($metadata['conditions'])) {
-                $handResult->setSubValue($this->calculateSubValue($handResult));
+                $this->calculateMetaValues($handResult);
                 break;
             }
         }
@@ -60,33 +60,45 @@ class Hand
         return $handResult;
     }
 
-    public function calculateSubValue(HandResult $handResult): int
+    /**
+     * @param HandResult $handResult
+     * @return void
+     */
+    public function calculateMetaValues(HandResult $handResult)
     {
         switch ($handResult->getValue()) {
             case Rules::ROYAL_FLUSH_VALUE:
             case Rules::STRAIGHT_FLUSH_VALUE:
             case Rules::STRAIGHT_VALUE:
                 $aceIsHighest = true;
-                if (HandEvaluator::isRankInHand($this->getCards(), 'A') && HandEvaluator::isRankInHand($this->getCards(), '2')) {
+                if (HandEvaluator::isRankInHand($this->getCards(),
+                        'A') && HandEvaluator::isRankInHand($this->getCards(), '2')) {
                     $aceIsHighest = false;
                 }
-                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 1, $aceIsHighest);
+                $handResult->setSubValue(HandEvaluator::sumValuesOfMagnitude($this->getCards(), 1, $aceIsHighest));
+                return;
             case Rules::FLUSH_VALUE:
-                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 1);
+                $handResult->setSubValue(HandEvaluator::sumValuesOfMagnitude($this->getCards(), 1));
+                return;
             case Rules::FOUR_OF_A_KIND_VALUE:
-                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 4) +
-                    HandEvaluator::sumKickerValues($this->getCards());
+                $handResult->setSubValue(HandEvaluator::sumValuesOfMagnitude($this->getCards(), 4));
+                $handResult->setKickersValue(HandEvaluator::sumKickerValues($this->getCards()));
+                return;
             case Rules::FULL_HOUSE_VALUE:
-                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 3);
+                $handResult->setSubValue(HandEvaluator::sumValuesOfMagnitude($this->getCards(), 3));
+                return;
             case Rules::THREE_OF_A_KIND_VALUE:
-                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 3) +
-                    HandEvaluator::sumKickerValues($this->getCards());
+                $handResult->setSubValue(HandEvaluator::sumValuesOfMagnitude($this->getCards(), 3));
+                $handResult->setKickersValue(HandEvaluator::sumKickerValues($this->getCards()));
+                return;
             case Rules::TWO_PAIR_VALUE:
             case Rules::ONE_PAIR_VALUE:
-                return HandEvaluator::sumValuesOfMagnitude($this->getCards(), 2) +
-                    HandEvaluator::sumKickerValues($this->getCards());
+                $handResult->setSubValue(HandEvaluator::sumValuesOfMagnitude($this->getCards(), 2));
+                $handResult->setKickersValue(HandEvaluator::sumKickerValues($this->getCards()));
+                return;
             case Rules::HIGH_CARD_VALUE:
-                return HandEvaluator::getHighCardRankValue($this->getCards());
+                $handResult->setKickersValue(HandEvaluator::sumKickerValues($this->getCards()));
+                return;
             default:
                 throw new InvalidArgumentException('Unknown value of winning hand!');
         }
@@ -129,6 +141,4 @@ class Hand
 
         return rtrim($handString, Cards::DELIMITER);
     }
-
-
 }

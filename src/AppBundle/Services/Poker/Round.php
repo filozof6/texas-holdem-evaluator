@@ -61,8 +61,14 @@ class Round
                     $bSubValue = $b->getHandResult()->getSubValue();
 
                     if ($aSubValue === $bSubValue) {
-                        $i = 1;
-                        return 0;
+                        $aKickersValue = $a->getHandResult()->getKickersValue();
+                        $bKickersValue = $b->getHandResult()->getKickersValue();
+
+                        if ($aKickersValue === $bKickersValue) {
+                            return 0;
+                        }
+
+                        return ($aKickersValue < $bKickersValue) ? 1 : -1;
                     }
 
                     return ($aSubValue < $bSubValue) ? 1 : -1;
