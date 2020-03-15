@@ -43,7 +43,7 @@ class HandEvaluator
                 $previousCardRank = Cards::getRankValue($previousCard[0], $aceIsHighest);
                 $currentCardRank = Cards::getRankValue($card[0], $aceIsHighest);
 
-                if ($currentCardRank !== $previousCardRank * 2) {
+                if ($currentCardRank !== $previousCardRank * Cards::RANK_VALUE_MULTIPLIER) {
                     $toReturn = false;
                     break;
                 }
