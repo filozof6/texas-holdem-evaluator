@@ -86,6 +86,7 @@ class Hand
                 return;
             case Rules::FULL_HOUSE_VALUE:
                 $handResult->setSubValue(HandEvaluator::sumValuesOfMagnitude($this->getCards(), 3));
+                $handResult->setKickersValue(HandEvaluator::sumValuesOfMagnitude($this->getCards(), 2));
                 return;
             case Rules::THREE_OF_A_KIND_VALUE:
                 $handResult->setSubValue(HandEvaluator::sumValuesOfMagnitude($this->getCards(), 3));

@@ -135,6 +135,7 @@ class HandEvaluatorTest extends TestCase
     public function sumValuesOfMagnitudeProvider()
     {
         return [
+            [['2C', '2D', '2H', 'AH', 'AH'], 3, true, Cards::TWO_VALUE],
             [['2C', '2D', 'QH', 'KS', 'AH'], 2, true, Cards::TWO_VALUE],
             [['AD', 'AS', 'AH', '5D', '6D'], 3, true, Cards::ACE_HIGH_VALUE],
             [['AD', 'AD', '3S', '4S', '5S'], 2, true, Cards::ACE_HIGH_VALUE],
